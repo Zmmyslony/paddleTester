@@ -4,12 +4,13 @@ from oscilloscopeCommunication import measureVoltage
 
 BASE_ANGLE = 0
 
+
 def testPaddle(oscilloscope, arduino, ch1Normalization, ch2Normalization, qwpSteps, hwpSteps,
- qwpChannel = 1, hwpChannel = 2):
+               measDir, rotorLogs, qwpChannel=1, hwpChannel=2):
     timeStamp = datetime.now()
     timeStamp = timeStamp.strftime("%Y-%b-%d_%H:%M")
 
-    if(qwpSteps > 0):
+    if qwpSteps > 0:
         print("Measuring QWP")
         filenameQWP = "measurements/{}_{}_{}.csv".format(timeStamp, qwpSteps, "QWP")
         fileQWP = open(filenameQWP, "w")
@@ -22,10 +23,10 @@ def testPaddle(oscilloscope, arduino, ch1Normalization, ch2Normalization, qwpSte
             rotatePaddle(arduino, qwpChannel, newQwpAngle)
             measurements = measureVoltage(oscilloscope, ch1Normalization, ch2Normalization)
             fileQWP.write("{}\t{}\t{:.3f}\t{:.3f}\n".format(newQwpAngle, BASE_ANGLE,
-                *measurements))
+                                                            *measurements))
         fileQWP.close()
 
-    if(hwpSteps > 0):
+    if hwpSteps > 0:
         print("Measuring HWP")
         filenameHWP = "measurements/{}_{}_{}.csv".format(timeStamp, hwpSteps, "HWP")
         fileHWP = open(filenameHWP, "w")
@@ -38,5 +39,5 @@ def testPaddle(oscilloscope, arduino, ch1Normalization, ch2Normalization, qwpSte
             rotatePaddle(arduino, hwpChannel, newHwpAngle)
             measurements = measureVoltage(oscilloscope, ch1Normalization, ch2Normalization)
             fileHWP.write("{}\t{}\t{:.3f}\t{:.3f}\n".format(BASE_ANGLE, newHwpAngle,
-                *measurements))
+                                                            *measurements))
         fileHWP.close()
