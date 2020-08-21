@@ -18,7 +18,7 @@ def writeCommand(file, instrument, command):
     while not response:
         time.sleep(REFRESH_PERIOD)
         response = instrument.read()
-    file.write(currentTime + "\t" + response)
+    file.write(currentTime() + "\t" + response)
     return response
 
 
@@ -26,6 +26,12 @@ def writeNonzeroCommand(file, instrument, command, val):
     if not val == 0:
         command = command + str(int(val))
         writeCommand(file, instrument, command)
+
+
+
+def writeLetterCommand(file, instrument, letter, val):
+    command = letter + str(val)
+    writeCommand(file, instrument, command)
 
 
 def inRange(val, lowerLimit, upperLimit):
@@ -69,21 +75,20 @@ def getShortestPath(newVal, oldVal):
         return moveVal
 
 
-# def setAccelerationRamp(file, rotor, acceleration):
-#     command = "b" + str(acceleration)
-#     writeCommand(file, rotor, command)
-
-
 def setMicrostepping(file, rotor, microsteps):
-    command = "g" + str(microsteps)
-    writeCommand(file, rotor, command)
+    # command = "g" + str(microsteps)
+    # writeCommand(file, rotor, command)
+    writeLetterCommand(file, instrument, "g", microsteps)
 
 
 def setMode(file, instrument, mode, subMode):
-    command = "!" + str(mode)
-    subCommand = "p" + str(subMode)
-    writeCommand(file, instrument, command)
-    writeCommand(file, instrument, subCommand)
+    # command = "!" + str(mode)
+    # subCommand = "p" + str(subMode)
+    # writeCommand(file, instrument, command)
+    # writeCommand(file, instrument, subCommand)
+    writeLetterCommand(file, instrument, "p", subMode)
+    writeLetterCommand(file, instrument, "!", mode)
+
 
 
 def setCurrentLimit(file, instrument, phaseCurrent, phaseCurrentAtStandstill, modeAbsolute):
@@ -94,15 +99,17 @@ def setCurrentLimit(file, instrument, phaseCurrent, phaseCurrentAtStandstill, mo
     phaseCurrent = phaseCurrent / limiter
     phaseCurrentAtStandstill = phaseCurrentAtStandstill / limiter
 
-    phaseCurrent = inRange(phaseCurrent, 0, 100)
-    phaseCurrentAtStandstill = inRange(phaseCurrentAtStandstill, 0, 100)
+    phaseCurrent = int(inRange(phaseCurrent, 0, 100))
+    phaseCurrentAtStandstill = int(inRange(phaseCurrentAtStandstill, 0, 100))
 
-    commandCurrent = "i" + str(int(phaseCurrent))
-    commandCurrentStandstill = "r" + str(int(phaseCurrentAtStandstill))
+    # commandCurrent = "i" + str(int(phaseCurrent))
+    # commandCurrentStandstill = "r" + str(int(phaseCurrentAtStandstill))
+    #
+    # writeCommand(file, instrument, commandCurrent)
+    # writeCommand(file, instrument, commandCurrentStandstill)
 
-    writeCommand(file, instrument, commandCurrent)
-    writeCommand(file, instrument, commandCurrentStandstill)
-
+    writeLetterCommand(file, instrument, "i", phaseCurrent)
+    writeLetterCommand(file, instrument, "r", phaseCurrentAtStandstill)
 
 def setAccelerationRamp(file, instrument, startSpeed, maxSpeed, acceleration,
                         stepsPerRev, microsteps, degPerS):
