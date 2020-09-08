@@ -9,7 +9,7 @@ BASE_ANGLE = 0
 def genMeasurementFilename(diameter, shortName):
     measurementDir = "measurements/{}mm".format(diameter)
     nameSuffix = shortName + str(countPrefix(measurementDir, shortName)) + ".tsv"
-    measurementFilename = os.pathjoin(measurementDir, nameSuffix)
+    measurementFilename = os.path.join(measurementDir, nameSuffix)
     return measurementFilename
 
 
@@ -36,6 +36,7 @@ def measureWP(arduinoPort, oscilloscope, shortName,
               longName, steps, workingCH, otherCH, sensitivityCH1,
               sensitivityCH2, diameter, invertWorkingCH=False,
               invertOtherCH=False):
+    print(steps)
     if steps > 0:
         measurementFilename = genMeasurementFilename(diameter, shortName)
         measurementFile = open(measurementFilename, "w")
@@ -44,6 +45,7 @@ def measureWP(arduinoPort, oscilloscope, shortName,
         writeHeader(measurementFile, shortName, longName, steps, sensitivityCH1, sensitivityCH2)
         movePaddleToStart(arduinoPort, otherCH, invertOtherCH)
         for i in range(steps + 1):
+            print("\r{} / {}".format(i, steps), end = '')
             newAngle = genNewAngle(i, steps, invertWorkingCH)
             rotatePaddle(arduinoPort, workingCH, newAngle)
             measurements = measureVoltage(oscilloscope, sensitivityCH1, sensitivityCH2)
@@ -53,7 +55,7 @@ def measureWP(arduinoPort, oscilloscope, shortName,
 
 def testPaddle(oscilloscope, arduinoPort, sensitivityCH1, sensitivityCH2,
                diameter, measDir, rotorLogs, qwpCH=1, hwpCH=2, qwpSteps=0, hwpSteps=0):
-    makeWorkingDirs(diameter)
+    # makeWorkingDirs(diameter)
     measureWP(arduinoPort, oscilloscope, "QWP", "Quarter", qwpSteps,
               qwpCH, hwpCH, sensitivityCH1, sensitivityCH2, diameter,
               invertOtherCH=True)

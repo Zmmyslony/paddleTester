@@ -7,8 +7,10 @@ BASE_ANGLE = 0
 
 def testPaddle(oscilloscope, arduino, ch1Normalization, ch2Normalization, qwpSteps, hwpSteps,
                measDir, rotorLogs, qwpChannel=1, hwpChannel=2):
-    timeStamp = datetime.now()
-    timeStamp = timeStamp.strftime("%Y-%b-%d_%H:%M")
+    # timeStamp = datetime.now()
+    # timeStamp = timeStamp.strftime("%Y-%b-%d_%H:%M")
+
+    print("qwpSteps = ", qwpSteps, hwpSteps)
 
     if qwpSteps > 0:
         print("Measuring QWP")

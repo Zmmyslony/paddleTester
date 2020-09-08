@@ -18,9 +18,10 @@ def startTesting(diameter):
     oscilloscope = vxi11.Instrument(OSCILLOSCOPE_IP)
     oscilloscope.write("CHDR off")  # change display mode
 
-    normalization = [3.00, 3.00]
+    normalization = [4.18, 4.22]
     qwpSteps, hwpSteps = inputStepNumber()
-    testPaddle(oscilloscope, arduino, *normalization, measDir, rotorLogs, qwpSteps=qwpSteps, hwpSteps=hwpSteps)
+
+    testPaddle(oscilloscope, arduino, *normalization, diameter, measDir, rotorLogs, qwpSteps=qwpSteps, hwpSteps = hwpSteps)
 
 
-startTesting(16)
+startTesting(14)

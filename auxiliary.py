@@ -33,9 +33,9 @@ def makeWorkingDirs(diameter):
 
 def inputStepNumber():
     print("Insert the number of angles of quarter wave plate to be measured: ")
-    qwpSteps = input()
+    qwpSteps = int(input())
     print("\nInsert the number of angles of half wave plate to be measured: ")
-    hwpSteps = input()
+    hwpSteps = int(input())
     return qwpSteps, hwpSteps
 
 
