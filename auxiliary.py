@@ -32,10 +32,10 @@ def makeWorkingDirs(diameter):
 
 
 def inputStepNumber():
-    print("Insert the number of angles of quarter wave plate to be measured: ")
-    qwpSteps = int(input())
-    print("\nInsert the number of angles of half wave plate to be measured: ")
-    hwpSteps = int(input())
+    # print("Insert the number of angles of quarter wave plate to be measured: ")
+    qwpSteps = int(input("Insert the number of angles of quarter wave plate to be measured: ""))
+    # print("\nInsert the number of angles of half wave plate to be measured: ")
+    hwpSteps = int(input("Insert the number of angles of half wave plate to be measured: "))
     return qwpSteps, hwpSteps
 
 
@@ -45,3 +45,10 @@ def countPrefix(directory, prefix):
         if file.startswith(prefix):
             i += 1
     return i + 1
+
+def confirmation(message, error_message):
+    keystroke = input(message)
+    while(not keystroke = y):
+        print(error_message)
+        keystroke = input(message)
+    return keystroke

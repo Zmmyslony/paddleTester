@@ -9,8 +9,8 @@ def analyze(measurementDir):
     root.withdraw()
 
     firstFile = filedialog.askopenfilename(initialdir=measurementDir)
-    secondFile = filedialog.askopenfilename(initialdir=measurementDir)
-    thirdFile = filedialog.askopenfilename(initialdir=measurementDir)
+    secondFile = filedialog.askopenfilename()
+    thirdFile = filedialog.askopenfilename()
 
     dataI1 = np.genfromtxt(firstFile)
     dataI2 = np.genfromtxt(secondFile)
@@ -23,4 +23,4 @@ def analyze(measurementDir):
     np.savetxt(outputFilename, data, delimiter="\t", newline="\n",
                fmt="%.2f")
 
-analyze("../output/2020-09-08/measurements")
+analyze("../output/2020-09-10/measurements")
