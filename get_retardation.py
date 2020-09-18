@@ -70,7 +70,7 @@ def get_retardation(data):
 
     retardation = np.arcsin(distance_between_extrema / 2) / (2 * np.pi)
     print("Retardation: {:.4f} or {:.4f} wave".format(retardation, 0.5 - retardation))
-    return probable_cross_pts[0], extrema_args[0], extrema_args[1]
+    return retardation, probable_cross_pts[0], extrema_args[0], extrema_args[1]
 
 
 def stokes_from_power(data):
@@ -80,47 +80,14 @@ def stokes_from_power(data):
     stokes[:, 2] = -(data[:, 5] - data[:, 4]) / (data[:, 5] + data[:, 4])
     return stokes
 
-# data = np.genfromtxt("test_data/qwp.tsv")
-# get_retardation(data)
-def temp(r):
-    filename = "../output/2020-09-08/measurements/{}mm/qwpPowers1.tsv".format(r)
-    powers = np.genfromtxt(filename)
-    data = stokes_from_power(powers)
-    print("Radius: {} mm".format(r))
-    get_retardation(data)
-
-def temp2(r):
-    filename = "../output/old_stokes/{} mm/qwp1.tsv".format(r)
-    powers = np.genfromtxt(filename)
-    data = stokes_from_power(powers)
-    print("Radius: {} mm".format(r))
-    get_retardation(data)
-
-print("Older results:")
-temp2(13)
-temp2(14)
-print("Newer results:")
-temp(14)
-temp(14.25)
-temp(14.5)
-temp(14.75)
-temp(15)
-print("Older results:")
-temp2(15)
-temp2(16)
-
-
 def fit_func(x: np.ndarray, a):
     return a / x
 
-def make_plot():
-    old_results = np.array([[13, 0.2798], [14, 0.2654], [15, 0.2387], [16, 0.2265]])
-    new_results = np.array([[14, 0.2810], [14.25, 0.2579], [14.5, 0.2679], [14.75, 0.2458], [15, 0.2330]])
-    all_results = np.append(old_results, new_results, axis=0)
-    all_results = all_results[np.argsort(all_results[:, 0]).reshape(1, all_results.shape[0])]
+def make_plot(data):
+    data = data[np.argsort(data[:, 0]).reshape(1, data.shape[0])]
 
-    radii = all_results[0, :, 0]
-    retardation = all_results[0:, :, 1][0]
+    radii = data[0, :, 0]
+    retardation = data[0:, :, 1][0]
 
     popt, pcov = curve_fit(fit_func, radii, retardation, p0=[4])
     radii_lin = np.linspace(radii.min(), radii.max(), 50)
@@ -129,14 +96,35 @@ def make_plot():
     plt.figure(figsize=(4,3), dpi=300)
     plt.grid(alpha=0.2)
     plt.plot(radii_lin, retardation_lin, c="k", label="Model fit")
-    plt.scatter(old_results[:, 0], old_results[:, 1], c="g", label="Crude step")
-    plt.scatter(new_results[:, 0], new_results[:, 1], c="b", label="Fine step")
+    plt.scatter(radii, retardation, c="b", label="Data")
+    # plt.scatter(new_results[:, 0], new_results[:, 1], c="b", label="Fine step")
     plt.legend()
     plt.xlabel("Radius of the paddle [mm]")
     plt.ylabel("Retardation [waves]")
-    plt.text(13, 0.24, "Fitted function:\na/x with \na = {:.2f}".format(*popt))
+    plt.text(13, 0.24, "Fitted function:\na/x with \na = {:.3f}\u00B1{:.3f}".format(*popt, *pcov[0]))
     plt.tight_layout()
     plt.savefig("retardation.png", dpi=300)
-    print(popt)
 
-make_plot()
+old_results = np.array([[13, 0.2798], [14, 0.2654], [15, 0.2387], [16, 0.2265]])
+new_results = np.array([[14, 0.2810], [14.25, 0.2579], [14.5, 0.2679], [14.75, 0.2458], [15, 0.2330]])
+
+all_results = np.append(old_results, new_results, axis=0)
+make_plot(all_results)
+
+def temp(r):
+    filename = "../output/2020-09-08/measurements/{}mm/qwpPowers1.tsv".format(r)
+    powers = np.genfromtxt(filename)
+    data = stokes_from_power(powers)
+    print("Radius: {} mm".format(r))
+    return r, get_retardation(data)[0]
+
+def temp2(r):
+    filename = "../output/old_stokes/{} mm/qwp1.tsv".format(r)
+    powers = np.genfromtxt(filename)
+    data = stokes_from_power(powers)
+    print("Radius: {} mm".format(r))
+    return r, get_retardation(data)[0]
+    
+data = np.array([temp2(13), temp2(14), temp(14), temp(14.25), temp(14.5), temp(14.75),
+temp(15), temp2(15), temp2(16)])
+# make_plot(data)
